@@ -10,3 +10,9 @@ releases:
     version: 2.34.1
     values:
       - argorollouts.yaml
+
+  - name: rollout
+    namespace: default
+    forceNamespace: default
+    chart: rollouts
+    version: 0.1.0
