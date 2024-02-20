@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: analysis-datadog
+spec:
+  metrics:
+  - name: analysis-datadog
+    interval: 20s
+    successCondition: result <= 0
+    count: 2
+    failureLimit: 1
+    provider:
+      datadog:
+        apiVersion: v2
+        interval: 5m
+        query: |
+          max:kubernetes.containers.restarts{*}
+---
+kind: AnalysisTemplate
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: always-error
+spec:
+  metrics:
+  - name: always-error
+    count: 2
+    interval: 5s
+    failureLimit: 1
+    provider:
+      job:
+        spec:
+          template:
+            spec:
+              containers:
+              - name: sleep
+                image: alpine:3.8
+                command: [sh, -c]
+                args: [exit 1]
+              restartPolicy: Never
+          backoffLimit: 0
